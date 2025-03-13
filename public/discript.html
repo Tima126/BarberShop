@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Зашифрованное имя:</h1>
+    <p id="encrypted-name"></p>
+
+    <h1>Возраст</h1>
+    <p id="age"></p>
+
+    <p><a href="/">Назад</a></p>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const encryptedName = params.get('name');
+    const age = params.get('age');
+
+
+    document.getElementById('encrypted-name').textContent = encryptedName || 'Неизвестен'
+    document.getElementById('age').textContent = age || 'Неизвестен'
+
+
+</script>
+
+
+</body>
+</html>
