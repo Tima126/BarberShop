@@ -94,7 +94,19 @@
         })();</script>
 </head>
 
-<body class="t-body" style="margin:0;"> <!--allrecords-->
+<body class="t-body" style="margin:0;">
+
+
+
+
+
+
+
+
+
+
+
+
     <div id="allrecords" class="t-records" data-hook="blocks-collection-content-node" data-tilda-project-id="12504937"
         data-tilda-page-id="64910891" data-tilda-formskey="c94d7043ca1eda320980be0812504937" data-tilda-cookie="no"
         data-tilda-lazy="yes" data-tilda-root-zone="com"> <!--header-->
@@ -113,68 +125,206 @@
                     <div class="t456__maincontainer " style="">
                         <div class="t456__leftwrapper" style="min-width:90px;width:90px;">
                             <div class="t456__logowrapper"> <a href="https://google.com">
-                                    <div class="t456__logo t-title" field="title">Golgen scissors</div> </a> </div> </div> <nav
-    class=" t456__rightwrapper t456__menualign_right" style="">
-                                        <ul role="list" class="t456__list t-menu__list">
-                                            <li class="t456__list_item" style="padding:0 15px 0 0;"> <a
-                                                    class="t-menu__link-item" href="" data-menu-submenu-hook=""
-                                                    data-menu-item-number="1">Личный кабинет</a> </li>
-                                            <li class="t456__list_item" style="padding:0 15px;"> <a
-                                                    class="t-menu__link-item" href="" data-menu-submenu-hook=""
-                                                    data-menu-item-number="2">О нас</a> </li>
-                                            <li class="t456__list_item" style="padding:0 15px;"> <a
-                                                    class="t-menu__link-item" href="regist.html" data-menu-submenu-hook=""
-                                                    data-menu-item-number="3">Зарегестрироваться</a> </li>
-                                            <li class="t456__list_item" style="padding:0 0 0 15px;"> <a
-                                                    class="t-menu__link-item" href="Vxod.html" data-menu-submenu-hook=""
-                                                    data-menu-item-number="4">Вход</a> </li>
-                                        </ul>
-                                        </nav>
-                                    </div>
-                            </div>
-                            <style>
-                                @media screen and (max-width:980px) {
-                                    #rec896896348 .t456__leftcontainer {
-                                        padding: 20px;
-                                    }
-                                }
-
-                                @media screen and (max-width:980px) {
-                                    #rec896896348 .t456__imglogo {
-                                        padding: 20px 0;
-                                    }
-                                }
-                            </style>
-                            <script
-                                type="text/javascript">t_onReady(function () { t_onFuncLoad('t_menu__highlightActiveLinks', function () { t_menu__highlightActiveLinks('.t456__list_item a'); }); }); t_onReady(function () { t_onFuncLoad('t_menu__setBGcolor', function () { t_menu__setBGcolor('896896348', '.t456'); window.addEventListener('resize', function () { t_menu__setBGcolor('896896348', '.t456'); }); }); t_onFuncLoad('t_menu__interactFromKeyboard', function () { t_menu__interactFromKeyboard('896896348'); }); });</script>
-                            <style>
-                                #rec896896348 .t-menu__link-item {}
-
-                                @supports (overflow:-webkit-marquee) and (justify-content:inherit) {
-
-                                    #rec896896348 .t-menu__link-item,
-                                    #rec896896348 .t-menu__link-item.t-active {
-                                        opacity: 1 !important;
-                                    }
-                                }
-                            </style>
-                            <style>
-                                #rec896896348 .t456__logowrapper a {
-                                    color: #333333;
-                                }
-
-                                #rec896896348 a.t-menu__link-item {
-                                    color: #333333;
-                                    font-weight: 600;
-                                }
-                            </style>
-                            <style>
-                                #rec896896348 .t456__logo {
-                                    color: #333333;
-                                }
-                            </style>
-                            <!--[if IE 8]> <style>#rec896896348 .t456{filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#D9ffffff',endColorstr='#D9ffffff');}</style> <![endif]-->
+                                    <div class="t456__logo t-title" field="title">Golgen scissors</div>
+                                </a> </div>
                         </div>
+                        <nav class=" t456__rightwrapper t456__menualign_right" style="">
+                            <ul role="list" class="t456__list t-menu__list">
+                                <li id="" class="t456__list_item" style="padding:0 15px 0 0;"> <a
+                                        class="t-menu__link-item" href="" data-menu-submenu-hook=""
+                                        data-menu-item-number="1">Личный кабинет</a>
+                                </li>
+                                <li class="t456__list_item" style="padding:0 15px;"> <a class="t-menu__link-item"
+                                        href="" data-menu-submenu-hook="" data-menu-item-number="2">О нас</a> </li>
+                                <li id="registerBtnItem" class="t456__list_item" style="padding:0 15px;"> <a
+                                        class="t-menu__link-item" href="regist.html" data-menu-submenu-hook=""
+                                        data-menu-item-number="3">Зарегестрироваться</a> </li>
+                                <li id="loginBtnItem" class="t456__list_item" style="padding:0 0 0 15px;"> <a
+                                        class="t-menu__link-item" href="Vxod.html" data-menu-submenu-hook=""
+                                        data-menu-item-number="4">Вход</a>
+                                </li>
+                                <li id="profileBtnItem" style="display: none;">
+                                    <button id="openProfileBtn">Профиль</button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+
+
+
+                <!-- Модальное окно -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <span id="closeModalBtn" class="close">&times;</span>
+        <h2>Мой профиль</h2>
+        <p><strong>Имя:</strong> <span id="profileName"></span></p>
+        <p><strong>Телефон:</strong> <span id="profilePhone"></span></p>
+        <p><strong>Баллы:</strong> <span id="profilePoints"></span></p>
+        <button id="logoutBtn">Выйти</button>
+    </div>
+</div>
+
+<style>
+    /* Стиль модального окна */
+    .modal {
+        display: none; /* По умолчанию скрыто */
+        position: fixed;
+        top: 0;
+        right: -300px; /* Начальная позиция (за пределами экрана) */
+        width: 300px;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        transition: right 0.3s ease; /* Плавная анимация */
+        z-index: 1000;
+    }
+
+    .modal.open {
+        right: 0;
+        display: block; /* Добавлено для отображения */
+    }
+
+    .modal-content {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    #logoutBtn {
+        margin-top: 15px;
+        padding: 10px 20px;
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #logoutBtn:hover {
+        background-color: #cc0000;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Проверяем, авторизован ли пользователь
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        const loginBtnItem = document.getElementById('loginBtnItem');
+        const registerBtnItem = document.getElementById('registerBtnItem');
+        const profileBtnItem = document.getElementById('profileBtnItem');
+        const openProfileBtn = document.getElementById('openProfileBtn');
+        const modal = document.getElementById('profileModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Проверяем, что элементы существуют
+        if (!openProfileBtn || !modal || !closeModalBtn || !logoutBtn) {
+            console.error('Один из элементов не найден!');
+            return;
+        }
+
+        if (isLoggedIn && user) {
+            // Скрываем кнопки "Вход" и "Зарегистрироваться"
+            loginBtnItem.style.display = 'none';
+            registerBtnItem.style.display = 'none';
+
+            // Показываем кнопку "Профиль"
+            profileBtnItem.style.display = 'inline';
+
+            // Заполняем данные в модальном окне
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profilePhone').textContent = user.phone;
+            document.getElementById('profilePoints').textContent = user.points || 0;
+        }
+
+        // Открытие модального окна
+        openProfileBtn.addEventListener('click', () => {
+            console.log('Кнопка "Профиль" нажата');
+            modal.classList.add('open');
+        });
+
+        // Закрытие модального окна
+        closeModalBtn.addEventListener('click', () => {
+            console.log('Кнопка закрытия нажата');
+            modal.classList.remove('open');
+        });
+
+        // Выход из профиля
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <style>
+                    @media screen and (max-width:980px) {
+                        #rec896896348 .t456__leftcontainer {
+                            padding: 20px;
+                        }
+                    }
+
+                    @media screen and (max-width:980px) {
+                        #rec896896348 .t456__imglogo {
+                            padding: 20px 0;
+                        }
+                    }
+                </style>
+                <script
+                    type="text/javascript">t_onReady(function () { t_onFuncLoad('t_menu__highlightActiveLinks', function () { t_menu__highlightActiveLinks('.t456__list_item a'); }); }); t_onReady(function () { t_onFuncLoad('t_menu__setBGcolor', function () { t_menu__setBGcolor('896896348', '.t456'); window.addEventListener('resize', function () { t_menu__setBGcolor('896896348', '.t456'); }); }); t_onFuncLoad('t_menu__interactFromKeyboard', function () { t_menu__interactFromKeyboard('896896348'); }); });</script>
+                <style>
+                    #rec896896348 .t-menu__link-item {}
+
+                    @supports (overflow:-webkit-marquee) and (justify-content:inherit) {
+
+                        #rec896896348 .t-menu__link-item,
+                        #rec896896348 .t-menu__link-item.t-active {
+                            opacity: 1 !important;
+                        }
+                    }
+                </style>
+                <style>
+                    #rec896896348 .t456__logowrapper a {
+                        color: #333333;
+                    }
+
+                    #rec896896348 a.t-menu__link-item {
+                        color: #333333;
+                        font-weight: 600;
+                    }
+                </style>
+                <style>
+                    #rec896896348 .t456__logo {
+                        color: #333333;
+                    }
+                </style>
+                <!--[if IE 8]> <style>#rec896896348 .t456{filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#D9ffffff',endColorstr='#D9ffffff');}</style> <![endif]-->
+            </div>
         </header> <!--/header-->
         <div id="rec894018472" class="r t-rec" style=" " data-animationappear="off" data-record-type="192">
             <!-- cover -->
@@ -614,7 +764,8 @@
                             </div>
                             <div class="t982__infowrapper">
                                 <div class="t982__persname t-name t-name_lg" field="li_persname__4532949792820">
-                                    <strong>Алексей Иванов</strong></div>
+                                    <strong>Алексей Иванов</strong>
+                                </div>
                                 <div class="t982__persdescr t-descr t-descr_xxs" field="li_persdescr__4532949792820">
                                     "Эксперт в мужских стрижках и уходе за бородой. Делает образы безупречными."</div>
                                 <div class="t982__socials t-text t-text_xs" field="li_text__4532949792820"><a
@@ -633,7 +784,8 @@
                             </div>
                             <div class="t982__infowrapper">
                                 <div class="t982__persname t-name t-name_lg" field="li_persname__4542949792821">
-                                    <strong>Максим Петров</strong></div>
+                                    <strong>Максим Петров</strong>
+                                </div>
                                 <div class="t982__persdescr t-descr t-descr_xxs" field="li_persdescr__4542949792821">
                                     Стаж: 8 лет.<br />"Мастер современных и классических стрижек. Создаёт идеальные
                                     формы."</div>
@@ -710,7 +862,7 @@
                     }
                 }
             </style>
-           
+
         </div>
         <div id="rec894133753" class="r t-rec t-rec_pt_135 t-rec_pb_135"
             style="padding-top:135px;padding-bottom:135px;background-color:#000000; " data-animationappear="off"
@@ -760,7 +912,8 @@
                             </div>
                             <div class="t982__infowrapper">
                                 <div class="t982__persname t-name t-name_lg" field="li_persname__9962949792820">
-                                    <strong>Анна Смирнова</strong></div>
+                                    <strong>Анна Смирнова</strong>
+                                </div>
                                 <div class="t982__persdescr t-descr t-descr_xxs" field="li_persdescr__9962949792820">
                                     Стаж: 7 лет.<br />"Стрижёт с тонким вкусом. Подчеркнёт вашу индивидуальность."</div>
                                 <div class="t982__socials t-text t-text_xs" field="li_text__9962949792820"><a
@@ -779,7 +932,8 @@
                             </div>
                             <div class="t982__infowrapper">
                                 <div class="t982__persname t-name t-name_lg" field="li_persname__9962949792821">
-                                    <strong>Екатерина Кузнецова</strong></div>
+                                    <strong>Екатерина Кузнецова</strong>
+                                </div>
                                 <div class="t982__persdescr t-descr t-descr_xxs" field="li_persdescr__9962949792821">
                                     Стаж: 6 лет.<br />"Специалист по креативным стрижкам. Сделает вас стильным и
                                     уверенным."</div>
@@ -856,7 +1010,7 @@
                     }
                 }
             </style>
-            
+
         </div>
         <div id="rec894026938" class="r t-rec t-rec_pt_45 t-rec_pb_45" style="padding-top:45px;padding-bottom:45px; "
             data-record-type="125"> <!-- T117 -->
@@ -943,7 +1097,8 @@
                                                                 восторге. Мастер Алекс сделал идеальную стрижку, учёл
                                                                 все мои пожелания. Атмосфера просто топ: уютно, стильно,
                                                                 играет классная музыка. Теперь только сюда!"<br />—
-                                                                <em>Иван</em> </div>
+                                                                <em>Иван</em>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1148,6 +1303,9 @@
             <script>t_onReady(function () { t_onFuncLoad('t958_init', function () { t958_init('894132166'); }); });</script>
         </div>
     </div> <!--/allrecords--> <!-- Tilda copyright. Don't remove this line -->
+
+
+
     <div class="t-tildalabel " id="tildacopy" data-tilda-sign="12504937#64910891"><a href="https://tilda.cc/"
             class="t-tildalabel__link">
             <div class="t-tildalabel__wrapper">
@@ -1157,8 +1315,8 @@
                 <div class="t-tildalabel__txtright">Tilda</div>
             </div>
         </a></div> <!-- Stat -->
-   
-      
+
+
 </body>
 
 </html>

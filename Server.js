@@ -34,7 +34,10 @@ app.post('/register', async (req, res) => {
 
         console.log(`Новый пользователь зарегистрирован: ${name}, телефон: ${phone}`);
 
-        return res.redirect('/');
+        return res.json({
+            success:true,
+            user: {name, phone, points: 0}
+        });
 
     } catch (error) {
         console.error('Ошибка при регистрации:', error.message);
@@ -65,7 +68,14 @@ app.post('/Login', async (req, res) => {
         }
 
         console.log(`пользователь вошел, телефон: ${phone}`);
-        return res.redirect('/');
+        return res.json({
+            success: true,
+            user: {
+                name: user.client_name,
+                phone: user.client_phone,
+                points: user.client_points || 0
+            }
+        });
     } catch (error) {
         console.error('Ошибка при входе:', error.message);
         return res.status(500).json({ message: 'Произошла ошибка при входе.' });
@@ -75,11 +85,11 @@ app.post('/Login', async (req, res) => {
 
 
 
-app.get('/', (res, req) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 
 app.listen(port, () => {
-    console.log(`Сервер запущен на http://192.168.1.9:${port}`);
+    console.log(`Сервер запущен на http://192.168.1.7:${port}`);
 });
