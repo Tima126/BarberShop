@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход в Личный Кабинет</title>
+    <style>
+        /* Общие стили */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .t-cover {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+            position: relative;
+        }
+        .t-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 40px;
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            text-align: center;
+        }
+        .t720__title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .t-input-group {
+            margin-bottom: 15px;
+        }
+        .t-input-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+            text-align: left;
+        }
+        .t-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        .t-input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .t-submit {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .t-submit:hover {
+            background-color: #0056b3;
+        }
+        .t-footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+        .t-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .t-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="t-cover">
+        <div class="t-container">
+            <div class="t720__mainblock">
+                <div class="t720__title">Вход</div>
+                
+                <form id="vxodsystem" action="/Login" method="post">
+                    <div class="t-input-group">
+                        <label class="t-input-title">Телефон</label>
+                        <input type="tel" id="phone" class="t-input" placeholder="+7 (___) ___-__-__" maxlength="18"
+                            name="phone">
+                    </div>
+                    <div class="t-input-group">
+                        <label class="t-input-title">Пароль</label>
+                        <input type="text" class="t-input" placeholder="Password" name="password">
+                    </div>
+                    <button type="submit" class="t-submit">Войти</button>
+                </form>
+                <div class="t-footer">
+                    Нет аккаунта? <a href="regist.html">Зарегистрируйтесь</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function formatPhoneNumber(input) {
+
+            let cleaned = input.replace(/\D/g, '');
+
+
+            if (cleaned.length > 11) {
+                cleaned = cleaned.slice(0, 11);
+            }
+
+
+            let formatted = '';
+            if (cleaned.length > 0) {
+                formatted += '+7';
+            }
+            if (cleaned.length > 1) {
+                formatted += ` (${cleaned.substring(1, 4)}`;
+            }
+            if (cleaned.length > 4) {
+                formatted += `) ${cleaned.substring(4, 7)}`;
+            }
+            if (cleaned.length > 7) {
+                formatted += `-${cleaned.substring(7, 9)}`;
+            }
+            if (cleaned.length > 9) {
+                formatted += `-${cleaned.substring(9, 11)}`;
+            }
+
+            return formatted;
+        }
+
+
+        const phoneInput = document.getElementById('phone');
+        const registrationForm = document.getElementById('vxodsystem');
+
+        registrationForm.addEventListener('submit', (event) => {
+           
+            const rawNumber = phoneInput.value.replace(/\D/g, '');
+            phoneInput.value = rawNumber;
+        });
+        phoneInput.addEventListener('input', () => {
+            const rawValue = phoneInput.value;
+            const formattedValue = formatPhoneNumber(rawValue);
+            phoneInput.value = formattedValue;
+        });
+
+    </script>
+
+    
+</body>
+</html>
