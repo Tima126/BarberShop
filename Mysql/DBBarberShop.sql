@@ -6,7 +6,8 @@ create table client (
     client_phone varchar(11) not null,
     client_email varchar(50),
     client_password varchar(100) not null,
-    client_bonuses int default 0
+    client_bonuses int default 0,
+    Role TINYINT(1) default 0
 );
 
 
