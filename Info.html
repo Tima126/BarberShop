@@ -12,6 +12,29 @@
             background-color: #f9f9f9;
         }
 
+        
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #2779e4;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Остальные стили остаются без изменений */
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -53,7 +76,7 @@
         }
 
         .edit-btn {
-            background-color: #007bff;
+            background-color: #c0c6e496;
             color: white;
         }
 
@@ -75,6 +98,15 @@
     </style>
 </head>
 <body>
+    <!-- Навигационное меню -->
+    <div class="navbar">
+        <a href="/admin-panel/records">Записи клиентов</a>
+        <a href="/admin-panel/schedule">Расписание парикмахеров</a>
+        <a href="/admin-panel/services">Управление услугами</a>
+        <a href="/admin-panel/discounts">Скидки</a>
+    </div>
+
+    <!-- Основной контент -->
     <div class="container">
         <h1>Админ-панель</h1>
         <div id="loading" class="loading">Загрузка данных...</div>
@@ -92,7 +124,6 @@
                 </tr>
             </thead>
             <tbody>
-
             </tbody>
         </table>
     </div>

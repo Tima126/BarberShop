@@ -8,9 +8,9 @@ const bcrypt = require('bcryptjs');
 const session = require('express-session');
 
 app.use(session({
-    secret: 'Admin-secret-key', 
-    resave: false, 
-    saveUninitialized: true, 
+    secret: 'Admin-secret-key',
+    resave: false,
+    saveUninitialized: true,
     cookie: { secure: false } // Для HTTPS установить secure: true
 }));
 
@@ -18,6 +18,15 @@ app.use(session({
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/admin-panel', express.static(path.join(__dirname, 'admin-panel')));
+
+function isAdmin(req, res, next) {
+    if (!req.session.isAdmin) {
+        return res.status(403).json({ message: 'Доступ запрещен.' });
+    }
+    next();
+}
+
 
 // Маршрут для регистрации
 app.post('/register', async (req, res) => {
@@ -71,7 +80,7 @@ app.post('/loginAdmin', async (req, res) => {
     const { login, password } = req.body;
 
     try {
-        
+
         const [Admin] = await db.query('SELECT * FROM client WHERE client_name = ? AND Role = ?', [login, '1']);
         if (Admin.length === 0) {
             console.log(`Попытка входа: Пользователь с логином "${login}" не найден.`);
@@ -80,7 +89,7 @@ app.post('/loginAdmin', async (req, res) => {
 
         const admin = Admin[0];
 
-        
+
         const isPasswordValid = await bcrypt.compare(password, admin.client_password);
         if (!isPasswordValid) {
             console.log(`Попытка входа: Неверный пароль для пользователя "${admin.client_name}".`);
@@ -90,10 +99,10 @@ app.post('/loginAdmin', async (req, res) => {
         req.session.isAdmin = true;
         req.session.adminName = admin.client_name;
 
-      
+
         console.log(`Администратор ${admin.client_name} успешно вошел.`);
 
-        
+
         return res.json({
             success: true,
             name: admin.client_name
@@ -106,132 +115,21 @@ app.post('/loginAdmin', async (req, res) => {
 });
 
 //Защищённый маршрут для админ панель
-app.get('/admin-panel', (req,res)=>{
-
-    if(!req.session.isAdmin){
-        return res.status(403).json({message:'Доступ запрещен.'});
-    }
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="ru">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Админ-панель</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9f9f9;
-                }
-
-                .container {
-                    max-width: 1200px;
-                    margin: 20px auto;
-                    padding: 20px;
-                    background: #fff;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    border-radius: 8px;
-                }
-
-                h1 {
-                    text-align: center;
-                    color: #333;
-                }
-
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 20px;
-                }
-
-                th, td {
-                    padding: 12px;
-                    text-align: left;
-                    border-bottom: 1px solid #ddd;
-                }
-
-                th {
-                    background-color: #f4f4f4;
-                    color: #555;
-                }
-
-                .actions button {
-                    padding: 8px 12px;
-                    margin: 2px;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 14px;
-                }
-
-                .edit-btn {
-                    background-color: #007bff;
-                    color: white;
-                }
-
-                .complete-btn {
-                    background-color: #28a745;
-                    color: white;
-                }
-
-                .delete-btn {
-                    background-color: #dc3545;
-                    color: white;
-                }
-
-                .loading {
-                    text-align: center;
-                    font-size: 18px;
-                    color: #555;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>Админ-панель</h1>
-                <div id="loading" class="loading">Загрузка данных...</div>
-                <table id="recordsTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>ID записи</th>
-                            <th>Клиент</th>
-                            <th>Телефон</th>
-                            <th>Парикмахер</th>
-                            <th>Парикмахерская</th>
-                            <th>Дата и время</th>
-                            <th>Статус</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-
-            <script src="admin.js"></script>
-        </body>
-        </html>
-    `);
+app.get('/admin-panel/records', isAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-panel', 'records.html'));
 });
 
-app.post('/logout', (req, res) =>{
+// выход для Админа
+app.post('/logout', (req, res) => {
 
-    req.session.destroy((err)=>{
-        if(err){
+    req.session.destroy((err) => {
+        if (err) {
             console.error('Ошибки при выходе:', err.message);
-            return res.status(500).json({message: 'Произошла ошибка при выходе.'});
+            return res.status(500).json({ message: 'Произошла ошибка при выходе.' });
         }
         res.json({ success: true, message: 'Вы успешно вышли.' });
     });
 });
-
-
-
-
-
-
 
 // Маршрут для входа 
 app.post('/Login', async (req, res) => {
@@ -268,13 +166,155 @@ app.post('/Login', async (req, res) => {
     }
 });
 
+app.get('/admin/get-records', async (req, res) => {
+    try {
+        const [records] = await db.query(`
+            SELECT 
+                r.recordid AS id,
+                c.client_name AS clientName,
+                c.client_phone AS clientPhone,
+                h.hairdresser_name AS hairdresserName,
+                h.hairdresser_surname AS hairdresserSurname,
+                cir.cirulna_city AS city,
+                cir.cirulna_street AS street,
+                cir.cirulna_buildingnumber AS buildingNumber,
+                r.recordtime AS recordTime,
+                r.is_completed AS isCompleted
+            FROM 
+                record r
+            JOIN 
+                client c ON r.clientid = c.clientid 
+            JOIN 
+                hairdresser h ON r.hairdresserid = h.hairdresserid
+            JOIN 
+                cirulna cir ON r.cirulnaid = cir.cirulnaid 
+            WHERE 
+                r.is_deleted = 0; 
+        `);
+
+        res.json(records);
+    } catch (error) {
+        console.error('Ошибка при получении записей:', error.message);
+        res.status(500).json({ message: 'Произошла ошибка при получении записей.' });
+    }
+});
+
+app.put('/admin/complete-record/:id', async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+
+        const [recordClient] = await db.query('SELECT clientid FROM record WHERE recordid = ? ', [id]);
+        if (recordClient.length === 0) {
+            return res.status(404).json({ message: 'Запись не найдена.' });
+        }
+
+        const clientId = recordClient[0].clientid;
+
+
+
+        // обнавление статуса записи
+        await db.query('UPDATE record SET is_completed = 1 WHERE recordid = ?', [id]);
+
+        // обнавление баланса баллов клиента за приём
+        await db.query('UPDATE client SET client_bonuses = client_bonuses + 10 WHERE clientid = ?', [clientId]);
+
+        res.json({ success: true, message: 'Приём успешно завершён.' });
+
+
+
+
+    } catch (error) {
+        console.error('Ошибка при обновлении статуса:', error.message);
+        res.status(500).json({ message: 'Произошла ошибка при обновлении статуса.' });
+    }
+});
+
+
+app.delete('/admin/delete-record/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+
+        await db.query('UPDATE record SET is_deleted = 1 WHERE recordid = ?', [id]);
+
+
+        await db.query('UPDATE record_service SET is_deleted = 1 WHERE recordid = ?', [id]);
+
+
+        await db.query('UPDATE payment SET is_deleted = 1 WHERE recordid = ?', [id]);
+
+        console.log(`Запись с ID: ${id} помечена как удалённая.`);
+
+        res.json({ success: true, message: 'Запись успешно помечена как удалённая.' });
+    } catch (error) {
+
+        console.error('Ошибка при пометке записи как удалённой:', error.message);
+        res.status(500).json({ message: 'Произошла ошибка.' });
+    }
+});
+
+
+// ---------------------------------------------------------------------------
+//  Маршруты для назначение работников админом
+// ---------------------------------------------------------------------------
+
+// выгрузка парикмахеров
+app.get('/api/hairdressers', async (req, res) => {
+    try {
+        const [hairdresser] = await db.query('SELECT * FROM hairdresser');
+        res.json(hairdresser);
+
+
+    } catch (error) {
+        console.error('Ошибка при получении парикмахеров:', error.message);
+        res.status(500).json({ message: 'Произошла ошибка.' });
+    }
+})
+
+
+// выгрузка расписание парикмахеров
+app.get('/api/schedule', async (req, res) => {
+
+    try {
+        const [schedule] = await db.query(
+            `SELECT 
+                hs.scheduleid,
+                hs.hairdresserid,
+                hs.workdate,
+                hs.starttime,
+                hs.endtime,
+                h.hairdresser_name,
+                h.hairdresser_surname
+            FROM 
+                hairdresser_schedule hs
+            JOIN 
+                hairdresser h ON hs.hairdresserid = h.hairdresserid
+            ORDER BY 
+                hs.workdate ASC, hs.starttime ASC`);
+
+        res.json(schedule);
+
+
+    } catch (error) {
+        console.error('Ошибка при получении парикмахеров:', error.message);
+        res.status(500).json({ message: 'Произошла ошибка.' });
+    }
+
+
+});
+
+
+
+
+
 
 
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
-
 
 app.listen(port, () => {
     console.log(`Сервер запущен на http://192.168.1.9:${port}`);

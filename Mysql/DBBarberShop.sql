@@ -1,124 +1,135 @@
-use dbbarbershop;
+USE dbbarbershop;
 
-create table client (
-    clientid int primary key auto_increment,
-    client_name varchar(30) not null,
-    client_phone varchar(11) not null,
-    client_email varchar(50),
-    client_password varchar(100) not null,
-    client_bonuses int default 0,
-    Role TINYINT(1) default 0
+-- Таблица клиентов
+CREATE TABLE client (
+    clientid INT PRIMARY KEY AUTO_INCREMENT,
+    client_name VARCHAR(30) NOT NULL,
+    client_phone VARCHAR(11) NOT NULL,
+    client_email VARCHAR(50),
+    client_password VARCHAR(100) NOT NULL,
+    client_bonuses INT DEFAULT 0,
+    Role TINYINT(1) DEFAULT 0, -- 0 - клиент, 1 - администратор
+    is_deleted TINYINT(1) DEFAULT 0 
 );
 
-
--- таблица для хранения информации о парикмахерах
-create table hairdresser (
-    hairdresserid int primary key auto_increment,
-    hairdresser_name varchar(30) not null,
-    hairdresser_surname varchar(30) not null,
-    hairdresser_expirience int not null,
-    hairdresser_phone varchar(11) not null
+-- Таблица парикмахеров
+CREATE TABLE hairdresser (
+    hairdresserid INT PRIMARY KEY AUTO_INCREMENT,
+    hairdresser_name VARCHAR(30) NOT NULL,
+    hairdresser_surname VARCHAR(30) NOT NULL,
+    hairdresser_experience INT NOT NULL,
+    hairdresser_phone VARCHAR(11) NOT NULL,
+    is_deleted TINYINT(1) DEFAULT 0 
 );
 
--- таблица для хранения информации о парикмахерской
-create table cirulna (
-    cirulnaid int primary key auto_increment,
-    cirulna_status tinyint(1) not null, -- открыта/закрыта
-    cirulna_city varchar(20) not null,
-    cirulna_street varchar(20) not null,
-    cirulna_buildingnumber int not null,
-    cirulna_hairdresser int null,
-    constraint fk_cirulna_hairdresser foreign key (cirulna_hairdresser) references hairdresser(hairdresserid)
+-- Таблица парикмахерских
+CREATE TABLE cirulna (
+    cirulnaid INT PRIMARY KEY AUTO_INCREMENT,
+    cirulna_status TINYINT(1) NOT NULL, -- 0 - закрыта, 1 - открыта
+    cirulna_city VARCHAR(20) NOT NULL,
+    cirulna_street VARCHAR(20) NOT NULL,
+    cirulna_buildingnumber INT NOT NULL,
+    cirulna_hairdresser INT NULL,
+    is_deleted TINYINT(1) DEFAULT 0, 
+    CONSTRAINT fk_cirulna_hairdresser FOREIGN KEY (cirulna_hairdresser) REFERENCES hairdresser(hairdresserid)
 );
 
--- таблица для хранения информации о записях клиентов на услуги
-create table record (
-    recordid int primary key auto_increment,
-    clientid int not null,
-    hairdresserid int not null,
-    cirulnaid int not null,
-    recordtime datetime not null,
-    constraint fk_record_client foreign key (clientid) references client(clientid),
-    constraint fk_record_hairdresser foreign key (hairdresserid) references hairdresser(hairdresserid),
-    constraint fk_record_cirulna foreign key (cirulnaid) references cirulna(cirulnaid)
+-- Таблица записей клиентов на услуги
+CREATE TABLE record (
+    recordid INT PRIMARY KEY AUTO_INCREMENT,
+    clientid INT NOT NULL,
+    hairdresserid INT NOT NULL,
+    cirulnaid INT NOT NULL,
+    recordtime DATETIME NOT NULL,
+    is_completed TINYINT(1), -- 0 - не завершено, 1 - завершено
+    is_deleted TINYINT(1) DEFAULT 0, 
+    CONSTRAINT fk_record_client FOREIGN KEY (clientid) REFERENCES client(clientid),
+    CONSTRAINT fk_record_hairdresser FOREIGN KEY (hairdresserid) REFERENCES hairdresser(hairdresserid),
+    CONSTRAINT fk_record_cirulna FOREIGN KEY (cirulnaid) REFERENCES cirulna(cirulnaid)
 );
 
--- таблица для хранения информации об услугах, предоставляемых парикмахерской
-create table service (
-    serviceid int primary key auto_increment,
-    service_name varchar(30) not null,
-    service_cost decimal(10, 2) not null,
-    service_sex tinyint(1) not null, -- 0 женщина, 1 мужчина
-    service_age tinyint(1) not null -- 0 дети, 1 взрослые
+-- Таблица услуг
+CREATE TABLE service (
+    serviceid INT PRIMARY KEY AUTO_INCREMENT,
+    service_name VARCHAR(30) NOT NULL,
+    service_cost DECIMAL(10, 2) NOT NULL,
+    service_sex TINYINT(1) NOT NULL, -- 0 - женщина, 1 - мужчина
+    service_age TINYINT(1) NOT NULL, -- 0 - дети, 1 - взрослые
+    is_deleted TINYINT(1) DEFAULT 0 
 );
 
--- таблица-связка цирюльни и клиента
-create table cirulna_client (
-    clientid int not null,
-    cirulnaid int not null,
-    primary key (clientid, cirulnaid),
-    constraint fk_cirulna_client_client foreign key (clientid) references client(clientid),
-    constraint fk_cirulna_client_cirulna foreign key (cirulnaid) references cirulna(cirulnaid)
+-- Таблица связи цирюльни и клиентов
+CREATE TABLE cirulna_client (
+    clientid INT NOT NULL,
+    cirulnaid INT NOT NULL,
+    PRIMARY KEY (clientid, cirulnaid),
+    CONSTRAINT fk_cirulna_client_client FOREIGN KEY (clientid) REFERENCES client(clientid),
+    CONSTRAINT fk_cirulna_client_cirulna FOREIGN KEY (cirulnaid) REFERENCES cirulna(cirulnaid)
 );
 
--- таблица для связи между записями и услугами
-create table record_service (
-    recordid int not null,
-    serviceid int not null,
-    primary key (recordid, serviceid),
-    constraint fk_record_service_record foreign key (recordid) references record(recordid),
-    constraint fk_record_service_service foreign key (serviceid) references service(serviceid)
+-- Таблица связи между записями и услугами
+CREATE TABLE record_service (
+    recordid INT NOT NULL,
+    serviceid INT NOT NULL,
+    is_deleted TINYINT(1) DEFAULT 0, 
+    PRIMARY KEY (recordid, serviceid),
+    CONSTRAINT fk_record_service_record FOREIGN KEY (recordid) REFERENCES record(recordid),
+    CONSTRAINT fk_record_service_service FOREIGN KEY (serviceid) REFERENCES service(serviceid)
 );
 
--- таблица для хранения отзывов клиентов о парикмахерах
-create table review (
-    reviewid int primary key auto_increment,
-    clientid int not null,
-    hairdresserid int not null,
-    reviewtext varchar(500) not null,
-    reviewrating int not null check (reviewrating between 1 and 5), -- рейтинг от 1 до 5
-    reviewdate datetime not null,
-    constraint fk_review_client foreign key (clientid) references client(clientid),
-    constraint fk_review_hairdresser foreign key (hairdresserid) references hairdresser(hairdresserid)
+-- Таблица отзывов клиентов о парикмахерах
+CREATE TABLE review (
+    reviewid INT PRIMARY KEY AUTO_INCREMENT,
+    clientid INT NOT NULL,
+    hairdresserid INT NOT NULL,
+    reviewtext VARCHAR(500) NOT NULL,
+    reviewrating INT NOT NULL CHECK (reviewrating BETWEEN 1 AND 5), -- Рейтинг от 1 до 5
+    reviewdate DATETIME NOT NULL,
+    is_deleted TINYINT(1) DEFAULT 0, 
+    CONSTRAINT fk_review_client FOREIGN KEY (clientid) REFERENCES client(clientid),
+    CONSTRAINT fk_review_hairdresser FOREIGN KEY (hairdresserid) REFERENCES hairdresser(hairdresserid)
 );
 
--- таблица для хранения расписания работы парикмахеров
-create table hairdresser_schedule (
-    scheduleid int primary key auto_increment,
-    hairdresserid int not null,
-    workdate date not null,
-    starttime time not null,
-    endtime time not null,
-    constraint fk_hairdresser_schedule_hairdresser foreign key (hairdresserid) references hairdresser(hairdresserid)
+-- Таблица расписания работы парикмахеров
+CREATE TABLE hairdresser_schedule (
+    scheduleid INT PRIMARY KEY AUTO_INCREMENT,
+    hairdresserid INT NOT NULL,
+    workdate DATE NOT NULL,
+    starttime TIME NOT NULL,
+    endtime TIME NOT NULL,
+    is_deleted TINYINT(1) DEFAULT 0, 
+    CONSTRAINT fk_hairdresser_schedule_hairdresser FOREIGN KEY (hairdresserid) REFERENCES hairdresser(hairdresserid)
 );
 
-
--- таблица для связи между парикмахерскими и услугами
-create table cirulna_service (
-    cirulnaid int not null,
-    serviceid int not null,
-    primary key (cirulnaid, serviceid),
-    constraint fk_cirulna_service_cirulna foreign key (cirulnaid) references cirulna(cirulnaid),
-    constraint fk_cirulna_service_service foreign key (serviceid) references service(serviceid)
+-- Таблица связи между парикмахерскими и услугами
+CREATE TABLE cirulna_service (
+    cirulnaid INT NOT NULL,
+    serviceid INT NOT NULL,
+    is_deleted TINYINT(1) DEFAULT 0, 
+    PRIMARY KEY (cirulnaid, serviceid),
+    CONSTRAINT fk_cirulna_service_cirulna FOREIGN KEY (cirulnaid) REFERENCES cirulna(cirulnaid),
+    CONSTRAINT fk_cirulna_service_service FOREIGN KEY (serviceid) REFERENCES service(serviceid)
 );
 
--- таблица для хранения информации о скидках, предоставляемых парикмахерскими
-create table discount (
-    discountid int primary key auto_increment,
-    discountname varchar(50) not null,
-    discountpercent decimal(5, 2) not null,
-    startdate date not null,
-    enddate date not null,
-    cirulnaid int not null,
-    constraint fk_discount_cirulna foreign key (cirulnaid) references cirulna(cirulnaid)
+-- Таблица скидок
+CREATE TABLE discount (
+    discountid INT PRIMARY KEY AUTO_INCREMENT,
+    discountname VARCHAR(50) NOT NULL,
+    discountpercent DECIMAL(5, 2) NOT NULL,
+    startdate DATE NOT NULL,
+    enddate DATE NOT NULL,
+    cirulnaid INT NOT NULL,
+    is_deleted TINYINT(1) DEFAULT 0, 
+    CONSTRAINT fk_discount_cirulna FOREIGN KEY (cirulnaid) REFERENCES cirulna(cirulnaid)
 );
 
--- таблица для хранения информации о платежах за услуги
-create table payment (
-    paymentid int primary key auto_increment,
-    recordid int not null,
-    paymentamount decimal(10, 2) not null,
-    paymentdate datetime not null,
-    paymentmethod varchar(20) not null, -- наличные, карта и т.д.
-    constraint fk_payment_record foreign key (recordid) references record(recordid)
+-- Таблица платежей
+CREATE TABLE payment (
+    paymentid INT PRIMARY KEY AUTO_INCREMENT,
+    recordid INT NOT NULL,
+    paymentamount DECIMAL(10, 2) NOT NULL,
+    paymentdate DATETIME NOT NULL,
+    paymentmethod VARCHAR(20) NOT NULL, -- Наличные, карта и т.д.
+    is_deleted TINYINT(1) DEFAULT 0, 
+    CONSTRAINT fk_payment_record FOREIGN KEY (recordid) REFERENCES record(recordid)
 );
