@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись к парикмахеру</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            color: white;
+            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Запись к парикмахеру</h2>
+        
+            <div class="input-group">
+                <label for="input_name">Имя</label>
+                <input type="text" id="input_name" name="name" required>
+            </div>
+            <div class="input-group">
+                <label for="input_phone">Телефон</label>
+                <input type="tel" id="input_phone" name="phone" required>
+            </div>
+            <div class="input-group">
+                <label for="input_hairdresser">Выберите парикмахера</label>
+                <select id="input_hairdresser" name="hairdresser" required>
+                    <option value="">Выберите парикмахера</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="date-picker">Выберите дату:</label>
+                <input type="date" id="date-picker">
+            </div>
+            <div class="input-group">
+                <label for="input_slot">Выберите слот</label>
+                <select id="input_slot" name="slot" required>
+                    <option value="">Выберите время</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="input_services">Выберите услугу</label>
+                <select id="input_services" name="services" required>
+                </select>
+            </div>
+            <button type="submit">Записаться</button>
+        
+
+
+
+
+
+        <script src="zapis.js"></script>
+    </div>
+</body>
+</html>

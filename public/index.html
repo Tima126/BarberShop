@@ -126,7 +126,8 @@
                                         data-menu-item-number="1">Личный кабинет</a>
                                 </li>
                                 <li class="t456__list_item" style="padding:0 15px;"> <a class="t-menu__link-item"
-                                        href="" data-menu-submenu-hook="" data-menu-item-number="2">О нас</a> </li>
+                                        href="#rec896943469" data-menu-submenu-hook="" data-menu-item-number="2">О
+                                        нас</a> </li>
                                 <li id="registerBtnItem" class="t456__list_item" style="padding:0 15px;"> <a
                                         class="t-menu__link-item" href="regist.html" data-menu-submenu-hook=""
                                         data-menu-item-number="3">Зарегестрироваться</a> </li>
@@ -145,7 +146,6 @@
                 </div>
 
                 <style>
-                    
                     .profile-button {
                         background: none;
                         border: none;
@@ -156,8 +156,6 @@
                         cursor: pointer;
                         text-decoration: none;
                     }
-
-
                 </style>
 
 
@@ -173,120 +171,62 @@
                     </div>
                 </div>
 
-
                 <style>
-                    /* Затемнение фона */
-                    .modal-overlay {
-                        display: none;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(0, 0, 0, 0.4);
-                        z-index: 999;
-                        opacity: 0;
-                        transition: opacity 0.3s ease;
-                    }
-
-                   
+                    /* Стиль модального окна */
                     .modal {
+                        font-family: Arial, sans-serif;
+                        display: none;
+                        /* По умолчанию скрыто */
                         position: fixed;
                         top: 0;
-                        right: -320px;
-                       
-                        width: 320px;
+                        right: -300px;
+                        /* Начальная позиция (за пределами экрана) */
+                        width: 300px;
                         height: 100%;
-                        background: #ffffff;
-                        color: #333;
-                        font-family: 'Inter', sans-serif;
-                        box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
-                        display: flex;
-                        flex-direction: column;
-                        transform: translateX(0);
-                        transition: right 0.4s ease;
+                        background-color: #fff;
+                        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+                        transition: right 0.3s ease;
+                        /* Плавная анимация */
                         z-index: 1000;
                     }
 
-                    /* Анимация появления */
                     .modal.open {
                         right: 0;
-                    }
-
-                    /* Заголовок */
-                    .modal-header {
-                        background: #f8f8f8;
-                        padding: 15px;
-                        text-align: center;
-                        font-size: 18px;
-                        font-weight: 600;
-                        color: #444;
-                        border-bottom: 1px solid #e0e0e0;
-                        position: relative;
+                        display: block;
+                        /* Добавлено для отображения */
                     }
 
                     .modal-content {
-                        flex: 1;
                         padding: 20px;
-                        text-align: left;
+                        text-align:left;
                     }
 
-                    /* Кнопка закрытия */
                     .close {
                         position: absolute;
-                        top: 12px;
-                        right: 15px;
-                        font-size: 22px;
+                        top: 10px;
+                        right: 10px;
+                        font-size: 24px;
                         cursor: pointer;
-                        color: #888;
-                        transition: color 0.2s ease;
                     }
 
-                    .close:hover {
-                        color: #ff4d4d;
-                    }
-
-                    /* Поля профиля с разделителями */
-                    .profile-info p {
-                        font-size: 15px;
-                        margin: 12px 0;
-                        font-weight: 400;
-                        color: #444;
-                        display: flex;
-                        justify-content: space-between;
-                        padding-bottom: 8px;
-                        border-bottom: 1px solid #e0e0e0;
-                    }
-
-                    .profile-info span {
-                        font-weight: 500;
-                        color: #000;
-                    }
-
-                    /* Кнопка выхода */
                     #logoutBtn {
-                        width: 100%;
-                        padding: 12px;
-                        margin-top: 20px;
-                        background: #a04dff;
+                        margin-top: 15px;
+                        padding: 10px 20px;
+                        background-color: #ff4d4d;
                         color: white;
-                        font-size: 16px;
-                        font-weight: bold;
                         border: none;
-                        border-radius: 8px;
+                        border-radius: 5px;
                         cursor: pointer;
-                        transition: background 0.3s ease;
                     }
 
                     #logoutBtn:hover {
-                        background: #cc0000;
+                        background-color: #cc0000;
                     }
                 </style>
 
-
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
-
+                        // Проверяем, авторизован ли пользователь
                         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
                         const user = JSON.parse(localStorage.getItem('user'));
 
@@ -298,7 +238,7 @@
                         const closeModalBtn = document.getElementById('closeModalBtn');
                         const logoutBtn = document.getElementById('logoutBtn');
 
-
+                        // Проверяем, что элементы существуют
                         if (!openProfileBtn || !modal || !closeModalBtn || !logoutBtn) {
                             console.error('Один из элементов не найден!');
                             return;
@@ -309,36 +249,36 @@
                             loginBtnItem.style.display = 'none';
                             registerBtnItem.style.display = 'none';
 
-
+                            // Показываем кнопку "Профиль"
                             profileBtnItem.style.display = 'inline';
 
-
+                            // Заполняем данные в модальном окне
                             document.getElementById('profileName').textContent = user.name;
                             document.getElementById('profilePhone').textContent = user.phone;
                             document.getElementById('profilePoints').textContent = user.points || 0;
                         }
 
-
+                        // Открытие модального окна
                         openProfileBtn.addEventListener('click', () => {
-                           
+                            console.log('Кнопка "Профиль" нажата');
                             modal.classList.add('open');
                         });
 
-
+                        // Закрытие модального окна
                         closeModalBtn.addEventListener('click', () => {
-                            
+                            console.log('Кнопка закрытия нажата');
                             modal.classList.remove('open');
                         });
 
-
+                        // Выход из профиля
                         logoutBtn.addEventListener('click', () => {
                             localStorage.removeItem('isLoggedIn');
                             localStorage.removeItem('user');
-                            console.log(`Пользователь Вышел: ${user.name}, Телефон: ${user.phone}`);
                             window.location.href = '/';
                         });
                     });
                 </script>
+
 
                 <style>
                     @media screen and (max-width:980px) {
@@ -429,7 +369,7 @@
             <div class="t467">
                 <div class="t-container t-align_center">
                     <div class="t-col t-col_10 t-prefix_1">
-                        <div class="t467__title t-title t-title_lg t-margin_auto t-animate"
+                        <div id="onas" class="t467__title t-title t-title_lg t-margin_auto t-animate"
                             data-animate-style="fadeinup" data-animate-group="yes" field="title">О нас</div>
                         <div class="t467__descr t-descr t-descr_xl t-margin_auto t-animate" data-animate-style="zoomin"
                             data-animate-group="yes" field="descr">"<strong>A Golden Scissors</strong> — это не просто
@@ -486,7 +426,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href=""
+                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href="zapis.html"
                                         class="t778__btn t-btn t-btn_xs"
                                         style="color:#ffffff;background-color:#000000;border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;">
                                         <table role="presentation" style="width:100%; height:100%;">
@@ -526,7 +466,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href=""
+                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href="zapis.html"
                                         class="t778__btn t-btn t-btn_xs"
                                         style="color:#ffffff;background-color:#000000;border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;">
                                         <table role="presentation" style="width:100%; height:100%;">
@@ -566,7 +506,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href=""
+                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href="zapis.html"
                                         class="t778__btn t-btn t-btn_xs"
                                         style="color:#ffffff;background-color:#000000;border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;">
                                         <table role="presentation" style="width:100%; height:100%;">
@@ -648,7 +588,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href=""
+                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href="zapis.html"
                                         class="t778__btn t-btn t-btn_xs"
                                         style="color:#ffffff;background-color:#000000;border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;">
                                         <table role="presentation" style="width:100%; height:100%;">
@@ -688,7 +628,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href=""
+                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href="zapis.html"
                                         class="t778__btn t-btn t-btn_xs"
                                         style="color:#ffffff;background-color:#000000;border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;">
                                         <table role="presentation" style="width:100%; height:100%;">
@@ -728,7 +668,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href=""
+                                <div class="t778__btn-wrapper t1002__btns-wrapper "> <a href="zapis.html"
                                         class="t778__btn t-btn t-btn_xs"
                                         style="color:#ffffff;background-color:#000000;border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;">
                                         <table role="presentation" style="width:100%; height:100%;">
@@ -1365,8 +1305,7 @@
             </div>
             <script>t_onReady(function () { t_onFuncLoad('t958_init', function () { t958_init('894132166'); }); });</script>
         </div>
-    </div> <!--/allrecords--> <!-- Tilda copyright. Don't remove this line -->
-    <!--Шапка сайта регистрация войти онас -->
+    </div>
 
 
 

@@ -5,101 +5,164 @@ document.addEventListener('DOMContentLoaded', () => {
     const endTimeInput = document.getElementById('end-time');
     const addSlot = document.getElementById('add-slot');
     const scheduleTableBody = document.querySelector('#schedule-table tbody');
-    const loading = document.getElementById('loading');
-    const scheduleTable = document.getElementById('schedule-table');
-   
+
     // Загрузка списка парикмахеров
     async function loadHairdressers() {
         try {
-            const response = await fetch('/api/hairdressers'); 
+            const response = await fetch('/api/hairdressers');
             if (!response.ok) throw new Error('Ошибка при загрузке парикмахеров.');
 
             const hairdressers = await response.json();
+            console.log('Загруженные парикмахеры:', hairdressers); // Отладочное сообщение
+
+            if (hairdressers.length === 0) {
+                hairdresserSelect.innerHTML = '<option value="">Нет доступных парикмахеров</option>';
+                return;
+            }
+
             hairdresserSelect.innerHTML = '';
             hairdressers.forEach(hairdresser => {
                 const option = document.createElement('option');
-                option.value = hairdresser.hairdresserid;
+                option.value = hairdresser.hairdresserid; // Убедитесь, что это число
                 option.textContent = `${hairdresser.hairdresser_name} ${hairdresser.hairdresser_surname}`;
                 hairdresserSelect.appendChild(option);
             });
         } catch (error) {
-            console.error('Ошибка:', error.message); 
+            console.error('Ошибка:', error.message);
+            hairdresserSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
         }
     }
 
-    // выгрузка для расписание 
+    // Загрузка расписания
     async function loadSchedule() {
         try {
             const response = await fetch('/api/schedule');
             if (!response.ok) throw new Error('Ошибка при загрузке расписания.');
-
+    
             const schedule = await response.json();
-            
+            console.log('Данные из API:', schedule); // Логирование данных
+    
             populateScheduleTable(schedule);
-
-            loading.style.display = 'none';
-            scheduleTable.style.display = 'table';
-
-
-
         } catch (error) {
             console.error('Ошибка:', error.message);
-            loading.textContent = 'Не удалось загрузить данные.';
+            scheduleTableBody.innerHTML = '<tr><td colspan="5">Не удалось загрузить данные.</td></tr>';
         }
     }
 
-
-// ------------------------
-// функици для форматирование даты
-
-// Форматирование Даты
-function formDate(datestring){ 
-    const date = new Date(datestring);
-
-    return date.toLocaleDateString('ru-RU', {
-        day:'numeric',
-        month:'long',
-        year:'numeric'
+    function extractTime(isoString) {
+        if (!isoString) return 'Invalid Time'; // Защита от пустых значений
+    
+        const date = new Date(isoString);
+        if (isNaN(date)) return 'Invalid Time'; // Защита от некорректных данных
+    
+        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+    
+        return `${hours}:${minutes}:${seconds}`;
+    }
+    // Добавление слота
+    addSlot.addEventListener('click', async () => {
+        const rawHairdresserId = hairdresserSelect.value;
+        const date = datePicker.value; // Формат: YYYY-MM-DD
+        const startTime = startTimeInput.value; // Формат: HH:mm
+        const endTime = endTimeInput.value; // Формат: HH:mm
+        const hairdresserId = parseInt(rawHairdresserId, 10);
+    
+        if (isNaN(hairdresserId)) {
+            alert('Выберите корректного парикмахера.');
+            return;
+        }
+    
+        if (!date || !startTime || !endTime) {
+            alert('Заполните все поля.');
+            return;
+        }
+    
+        // Добавляем секунды для времени
+        const formattedStartTime = `${startTime}:00`;
+        const formattedEndTime = `${endTime}:00`;
+    
+        console.log('Отправляемые данные:', { hairdresserId, date, formattedStartTime, formattedEndTime });
+    
+        try {
+            const response = await fetch('/api/slotHair', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    hairdresserId,
+                    date,
+                    startTime: formattedStartTime,
+                    endTime: formattedEndTime
+                })
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка сервера');
+            }
+    
+            alert('Слот успешно добавлен.');
+            loadSchedule();
+        } catch (error) {
+            console.error('Ошибка:', error.message);
+            alert(`Ошибка: ${error.message}`);
+        }
     });
-}
 
-// Форматирование времени
-function formatTime(timeString) {
-    const date = new Date (`1970-01-01T${timeString}`)
-    return date.toLocaleTimeString('ry-RU', {
-        hour:'2-digit',
-        minute:'2-digit'
-    });
-}
-//-------------------------
+    // Форматирование даты
+    function formDate(datestring) {
+        const date = new Date(datestring);
+        return date.toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
 
+    // Форматирование времени
+    function formatTime(timeString) {
+        if (!timeString) return 'Invalid Time'; // Защита от пустых значений
 
-    // Функциия для заполнения таблицы
+        // Удаляем микросекунды, если они есть
+        const cleanedTime = timeString.split('.')[0]; // Оставляем только "HH:mm:ss"
+
+        const [hours, minutes, seconds] = cleanedTime.split(':').map(Number);
+        if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return 'Invalid Time';
+
+        const date = new Date(1970, 0, 1, hours, minutes, seconds);
+        return date.toLocaleTimeString('ru-RU', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // Заполнение таблицы
     function populateScheduleTable(schedule) {
         scheduleTableBody.innerHTML = '';
-
-        schedule.forEach(slot =>{
+    
+        if (!schedule || schedule.length === 0) {
+            scheduleTableBody.innerHTML = '<tr><td colspan="5">Нет доступных слотов.</td></tr>';
+            return;
+        }
+    
+        schedule.forEach(slot => {
+            const formattedStartTime = extractTime(slot.starttime);
+            const formattedEndTime = extractTime(slot.endtime);
+    
             const row = document.createElement('tr');
-            const formattedDate = formDate(slot.workdate); 
-            const formattedStartTime = formatTime(slot.starttime); 
-            const formattedEndTime = formatTime(slot.endtime);
-
-
             row.innerHTML = `
-                <td>${slot.scheduleid}
+                <td>${slot.scheduleid}</td>
                 <td>${slot.hairdresser_name} ${slot.hairdresser_surname}</td>
-                <td>${formattedDate}</td>
+                <td>${formDate(slot.workdate)}</td>
                 <td>${formattedStartTime}</td>
                 <td>${formattedEndTime}</td>
-            ` ;
-            
+            `;
             scheduleTableBody.appendChild(row);
         });
-        
-
     }
-   
+
+
     loadHairdressers();
     loadSchedule();
-
 });

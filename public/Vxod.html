@@ -63,14 +63,11 @@
         });
 
         document.getElementById('loginForm').addEventListener('submit', async (event) => {
-            
             event.preventDefault();
-
             const formData = new FormData(event.target);
             let phone = formData.get('phone');
             const password = formData.get('password');
             phone = phone.replace(/\D/g, '');
-            
             try {
                 const response = await fetch('/Login', {
                     method: 'POST',

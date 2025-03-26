@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,23 +27,40 @@
             color: #333;
         }
 
+
+
+
+
         .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            /* Отступ между label и input */
             margin-bottom: 15px;
         }
 
         label {
-            display: block;
-            margin-bottom: 5px;
+            width: 150px;
+            /* Фиксированная ширина для одинакового выравнивания */
+            text-align: right;
+            /* Выравнивание текста label */
             font-weight: bold;
         }
 
-        select, input[type="date"], input[type="time"] {
-            width: 100%;
+        select,
+        input[type="date"],
+        input[type="time"] {
+            flex: 1;
+            /* Автоматическая подстройка ширины */
+            max-width: 300px;
+            /* Ограничение максимальной ширины */
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 16px;
         }
+
 
         button {
             padding: 10px 15px;
@@ -64,7 +82,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -80,33 +99,32 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Назначение расписания</h1>
 
-        
+
         <div class="form-group">
             <label for="hairdresser-select">Выберите парикмахера:</label>
-            <select id="hairdresser-select">
-              
-            </select>
+            <select id="hairdresser-select"></select>
         </div>
-
+        
         <div class="form-group">
             <label for="date-picker">Выберите дату:</label>
             <input type="date" id="date-picker">
         </div>
-
+        
         <div class="form-group">
             <label for="start-time">Время начала:</label>
             <input type="time" id="start-time">
         </div>
-
+        
         <div class="form-group">
             <label for="end-time">Время окончания:</label>
             <input type="time" id="end-time">
         </div>
-
+        
         <button id="add-slot">Добавить слот</button>
 
         <!-- Таблица расписания -->
@@ -128,4 +146,5 @@
 
     <script src="/admin-panel/schedule.js"></script>
 </body>
+
 </html>
