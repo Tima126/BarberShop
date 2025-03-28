@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const sql = require('mssql'); // Библиотека для работы с MSSQL
+const sql = require('mssql');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const { error } = require('console');
@@ -419,10 +419,10 @@ app.get('/Zapis/hairdresser', async (req, res) => {
             ON hairdresser_schedule.hairdresserid = hairdresser.hairdresserid
         `);
 
-        
-        console.log('Данные, полученные из базы данных:', hairdressers.recordset);
 
-        
+       
+
+
         res.json(hairdressers.recordset);
     } catch (error) {
         console.error('Ошибка при получении парикмахеров:', error.message);
@@ -430,6 +430,26 @@ app.get('/Zapis/hairdresser', async (req, res) => {
     }
 });
 
+
+
+
+app.get('/Zapis/Uslugi', async (req, res) => {
+    try {
+        const pool = await sql.connect(dbConfig);
+
+        
+        const result = await pool.request().query(`
+            SELECT serviceid, service_name 
+            FROM service 
+            WHERE is_deleted = 0
+        `);
+
+        res.json(result.recordset); 
+    } catch (error) {
+        console.error('Ошибка при получении услуг:', error.message);
+        res.status(500).json({ error: 'Ошибка сервера.' });
+    }
+});
 
 app.get('/Zapis/slots', async (req, res) => {
     const { hairdresserId, date } = req.query;
@@ -444,7 +464,7 @@ app.get('/Zapis/slots', async (req, res) => {
             .input('hairdresserId', sql.Int, hairdresserId)
             .input('date', sql.Date, date)
             .query(`
-                SELECT scheduleid, hairdresserid, workdate, starttime, endtime, is_deleted
+                SELECT scheduleid, hairdresserid, workdate, starttime, is_deleted
                 FROM hairdresser_schedule
                 WHERE hairdresserid = @hairdresserId 
                 AND workdate = @date 

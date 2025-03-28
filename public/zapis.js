@@ -4,6 +4,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const hairdresserSelect = document.getElementById('input_hairdresser');
     const datePicker = document.getElementById('date-picker');
     const slotInput = document.getElementById('input_slot');
+    const serviceSelect = document.getElementById('input_services');
+
+
+
+    // загрузка услуг
+   async function LoadYslug() {
+        try {
+            const response = await fetch('/Zapis/Uslugi');
+            
+            if (!response.ok) {
+                throw new Error('Ошибка при загрузке данных услуг');
+            }
+
+            const uslug = await response.json();
+
+            serviceSelect.innerHTML = '';
+
+            if (uslug.length === 0) {
+                serviceSelect.innerHTML = '<option value="">Нет доступных услуг</option>';
+                return;
+            }
+
+            
+            uslug.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.serviceid;
+                option.textContent = service.service_name;
+                serviceSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Ошибка:', error.message);
+            serviceSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
+        }
+    }
+
 
 
 
@@ -65,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             slots.forEach(slot => {
                 const option = document.createElement('option');
                 option.value = slot.scheduleid;
-                option.textContent = `${slot.starttime} - ${slot.endtime}`
+                option.textContent = `${slot.starttime}`
                 slotInput.appendChild(option);
             });
 
@@ -77,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Обработчик выбора парикмахеров и даты
+    
     hairdresserSelect.addEventListener('change', () => {
         const selectDate = datePicker.value;
         const selectHasirdresserId = hairdresserSelect.value;
@@ -87,14 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+
+
+
+
     datePicker.addEventListener('change', () =>{
         const selectDate = datePicker.value;
         const selectHasirdresserId = hairdresserSelect.value;
         loadSlots(selectHasirdresserId, selectDate);
 
+    });
 
-    })
-
+    LoadYslug()
     loadHairdressers()
 });
 
