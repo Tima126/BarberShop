@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .container {
             background: white;
             padding: 30px;
@@ -22,20 +24,25 @@
             width: 100%;
             max-width: 400px;
         }
+
         h2 {
             text-align: center;
             color: #333;
         }
+
         .input-group {
             margin-bottom: 15px;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             font-size: 14px;
             color: #555;
         }
-        input, select {
+
+        input,
+        select {
             width: 100%;
             padding: 10px;
             font-size: 16px;
@@ -43,6 +50,7 @@
             border-radius: 5px;
             outline: none;
         }
+
         button {
             width: 100%;
             padding: 12px;
@@ -54,23 +62,17 @@
             cursor: pointer;
             transition: background 0.3s ease;
         }
+
         button:hover {
             background: linear-gradient(135deg, #ff758c, #ff7eb3);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Запись к парикмахеру</h2>
-        
-            <div class="input-group">
-                <label for="input_name">Имя</label>
-                <input type="text" id="input_name" name="name" required>
-            </div>
-            <div class="input-group">
-                <label for="input_phone">Телефон</label>
-                <input type="tel" id="input_phone" name="phone" required>
-            </div>
+        <form id="bookingForm">
             <div class="input-group">
                 <label for="input_hairdresser">Выберите парикмахера</label>
                 <select id="input_hairdresser" name="hairdresser" required>
@@ -92,9 +94,62 @@
                 <select id="input_services" name="services" required>
                 </select>
             </div>
-            <button type="submit">Записаться</button>
-        
+            <button id="btSumbit">Записаться</button>
+        </form>
 
+        <script>
+            document.getElementById('btSumbit').addEventListener('click', async (event) => {
+                event.preventDefault();
+
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.userid) {
+                    alert('Пожалуйста, войдите в систему.');
+                    return;
+                }
+
+                const clientId = user.userid;
+                const hairdresserId = document.getElementById('input_hairdresser').value;
+                const date = document.getElementById('date-picker').value;
+                const slot = document.getElementById('input_slot').value;
+                const serviceId = document.getElementById('input_services').value;
+
+                console.log('Данные, полученные с клиента:', {clientId,hairdresserId, date, slot, serviceId });
+
+
+                if (!clientId || !hairdresserId || !date || !slot || !serviceId) {
+                    alert('Заполните все поля.');
+                    return;
+                }
+
+                
+
+                try {
+                    const response = await fetch('/api/book-appointment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            clientId,
+                            hairdresserId: parseInt(hairdresserId),
+                            cirulnaId: 1,
+                            recordTime:date,
+                            serviceId: parseInt(serviceId)
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Вы успешно записаны!');
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Произошла ошибка.');
+                    }
+                } catch (error) {
+                    console.error('Ошибка при записи:', error.message);
+                    alert('Не удалось выполнить запись.');
+                }
+            });
+
+        </script>
 
 
 
@@ -102,4 +157,5 @@
         <script src="zapis.js"></script>
     </div>
 </body>
+
 </html>

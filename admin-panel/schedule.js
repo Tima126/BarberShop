@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hairdresserSelect.innerHTML = '';
             hairdressers.forEach(hairdresser => {
                 const option = document.createElement('option');
-                option.value = hairdresser.hairdresserid; // Убедитесь, что это число
+                option.value = hairdresser.hairdresserid; 
                 option.textContent = `${hairdresser.hairdresser_name} ${hairdresser.hairdresser_surname}`;
                 hairdresserSelect.appendChild(option);
             });
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Ошибка при загрузке расписания.');
     
             const schedule = await response.json();
-            console.log('Данные из API:', schedule); // Логирование данных
+            console.log('Данные из API:', schedule); 
     
             populateScheduleTable(schedule);
         } catch (error) {
@@ -50,10 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function extractTime(isoString) {
-        if (!isoString) return 'Invalid Time'; // Защита от пустых значений
+        if (!isoString) return 'Invalid Time'; 
     
         const date = new Date(isoString);
-        if (isNaN(date)) return 'Invalid Time'; // Защита от некорректных данных
+        if (isNaN(date)) return 'Invalid Time'; 
     
         const hours = String(date.getUTCHours()).padStart(2, '0');
         const minutes = String(date.getUTCMinutes()).padStart(2, '0');
@@ -61,8 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
         return `${hours}:${minutes}:${seconds}`;
     }
+
     // Добавление слота
     addSlot.addEventListener('click', async () => {
+        
         const rawHairdresserId = hairdresserSelect.value;
         const date = datePicker.value; // Формат: YYYY-MM-DD
         const startTime = startTimeInput.value; // Формат: HH:mm
@@ -120,22 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Форматирование времени
-    function formatTime(timeString) {
-        if (!timeString) return 'Invalid Time'; // Защита от пустых значений
-
-        // Удаляем микросекунды, если они есть
-        const cleanedTime = timeString.split('.')[0]; // Оставляем только "HH:mm:ss"
-
-        const [hours, minutes, seconds] = cleanedTime.split(':').map(Number);
-        if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return 'Invalid Time';
-
-        const date = new Date(1970, 0, 1, hours, minutes, seconds);
-        return date.toLocaleTimeString('ru-RU', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
 
     // Заполнение таблицы
     function populateScheduleTable(schedule) {

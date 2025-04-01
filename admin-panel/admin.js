@@ -18,12 +18,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function extractTime(isoString) {
+        if (!isoString) return 'Invalid Time'; 
+    
+        const date = new Date(isoString);
+        if (isNaN(date)) return 'Invalid Time'; 
+    
+        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+    
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
+
+    // Форматирование даты
+    function formDate(datestring) {
+        const date = new Date(datestring);
+        return date.toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+
+
     // Заполнение таблицы данными
     function populateTable(records) {
         const tbody = recordsTable.querySelector('tbody');
         tbody.innerHTML = '';
 
         records.forEach(record => {
+            const formatedTime = extractTime(record.recordTime);
             const row = document.createElement('tr');
             row.setAttribute('data-record-id', record.id); 
 
@@ -33,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${record.clientPhone}</td>
                 <td>${record.hairdresserName} ${record.hairdresserSurname}</td>
                 <td>${record.city}, ${record.street}, ${record.buildingNumber}</td>
-                <td>${new Date(record.recordTime).toLocaleString()}</td>
+                <td>${formDate(record.recordDate)}, ${formatedTime}</td>
                 <td class="status">${record.isCompleted ? 'Выполнен' : 'В процессе'}</td>
                 <td class="actions">
                     ${

@@ -6,7 +6,7 @@ const session = require('express-session');
 const { error } = require('console');
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 // Конфигурация подключения к базе данных
 const dbConfig = {
@@ -84,6 +84,7 @@ app.post('/register', async (req, res) => {
         return res.json({
             success: true,
             user: {
+                userid: user.clientid,
                 name: user.client_name,
                 phone: user.client_phone,
                 points: user.client_bonuses || 0
@@ -138,9 +139,11 @@ app.post('/Login', async (req, res) => {
         return res.json({
             success: true,
             user: {
+                userid: user.clientid,
                 name: user.client_name,
                 phone: user.client_phone,
                 points: user.client_points || 0
+
             }
         });
     } catch (error) {
@@ -210,29 +213,32 @@ app.get('/admin/get-records', async (req, res) => {
         const pool = await sql.connect(dbConfig);
 
         const records = await pool.request().query(`
-            SELECT 
-                r.recordid AS id,
-                c.client_name AS clientName,
-                c.client_phone AS clientPhone,
-                h.hairdresser_name AS hairdresserName,
-                h.hairdresser_surname AS hairdresserSurname,
-                cir.cirulna_city AS city,
-                cir.cirulna_street AS street,
-                cir.cirulna_buildingnumber AS buildingNumber,
-                r.recordtime AS recordTime,
-                r.is_completed AS isCompleted
-            FROM 
-                record r
-            JOIN 
-                client c ON r.clientid = c.clientid 
-            JOIN 
-                hairdresser h ON r.hairdresserid = h.hairdresserid
-            JOIN 
-                cirulna cir ON r.cirulnaid = cir.cirulnaid 
-            WHERE 
-                r.is_deleted = 0; 
+SELECT 
+    r.recordid AS id,
+    c.client_name AS clientName,
+    c.client_phone AS clientPhone,
+    h.hairdresser_name AS hairdresserName,
+    h.hairdresser_surname AS hairdresserSurname,
+    cir.cirulna_city AS city,
+    cir.cirulna_street AS street,
+    cir.cirulna_buildingnumber AS buildingNumber,
+    r.recordtime AS recordDate,
+    r.is_completed AS isCompleted,
+	hs.starttime AS recordTime
+FROM 
+    record r
+JOIN 
+    client c ON r.clientid = c.clientid 
+JOIN 
+    hairdresser h ON r.hairdresserid = h.hairdresserid
+JOIN 
+    cirulna cir ON r.cirulnaid = cir.cirulnaid
+JOIN 
+    hairdresser_schedule hs ON h.hairdresserid = hs.hairdresserid -- Используем алиас h
+WHERE 
+    r.is_deleted = 0;
         `);
-
+            console.log()
         res.json(records.recordset);
 
     } catch (error) {
@@ -420,7 +426,15 @@ app.get('/Zapis/hairdresser', async (req, res) => {
         `);
 
 
+<<<<<<< Updated upstream
        
+=======
+<<<<<<< HEAD
+
+=======
+       
+>>>>>>> d71d60a26f161dcc532f52320acf76af746c7aef
+>>>>>>> Stashed changes
 
 
         res.json(hairdressers.recordset);
@@ -481,12 +495,105 @@ app.get('/Zapis/slots', async (req, res) => {
             is_deleted: slot.is_deleted
         }));
 
-        res.json(formattedSlots); // Отправляем отформатированные данные
+        res.json(formattedSlots);
     } catch (error) {
         console.error('Ошибка при получении слотов:', error.message);
         res.status(500).json({ error: 'Ошибка сервера.' });
     }
 });
+
+
+app.get('/Zapis/Service', async (req, res) => {
+    try {
+        const pool = await sql.connect(dbConfig);
+
+        const result = await pool.request().query(`
+            SELECT serviceid, service_name, service_cost
+            FROM service
+        `);
+
+        console.log('Данные, полученные из базы данных:', result.recordset);
+        res.json(result.recordset);
+    } catch (error) {
+        console.error('Ошибка при получении услуг:', error.message);
+        res.status(500).json({ message: 'Произошла ошибка.' });
+    }
+});
+
+
+
+
+
+app.post('/api/book-appointment', async (req, res) => {
+    const { clientId, hairdresserId, cirulnaId, recordTime, serviceId } = req.body;
+
+    if (!clientId || !hairdresserId || !cirulnaId || !recordTime || !serviceId) {
+        return res.status(400).json({ success: false, message: 'Все поля обязательны.' });
+    }
+
+    console.log({ clientId, hairdresserId, cirulnaId, recordTime, serviceId });
+
+
+    try {
+        const pool = await sql.connect(dbConfig);
+
+        // Проверяем, существует ли выбранный слот для парикмахера
+        const slotCheckResult = await pool.request()
+            .input('hairdresserId', sql.Int, hairdresserId)
+            .input('recordTime', sql.Date, recordTime)
+            .query(`
+                SELECT COUNT(*) AS count
+                FROM record
+                WHERE hairdresserid = @hairdresserId AND recordtime = @recordTime AND is_deleted = 0
+            `);
+
+        if (slotCheckResult.recordset[0].count > 0) {
+            return res.status(400).json({ success: false, message: 'Этот слот уже занят.' });
+        }
+
+        // Создаем запись в таблице record
+        const recordResult = await pool.request()
+            .input('clientId', sql.Int, clientId)
+            .input('hairdresserId', sql.Int, hairdresserId)
+            .input('cirulnaId', sql.Int, cirulnaId)
+            .input('recordTime', sql.Date, recordTime)
+            .input('serviceid', sql.Int, serviceId)
+            .query(`
+                INSERT INTO record (clientid, hairdresserid, cirulnaid, recordtime, is_completed, is_deleted, serviceid)
+                OUTPUT INSERTED.recordid
+                VALUES (@clientId, @hairdresserId, @cirulnaId, @recordTime, 0, 0, @serviceId)
+            `);
+
+        const recordId = recordResult.recordset[0].recordid;
+
+        // Создаем связь между записью и услугой
+        await pool.request()
+            .input('recordId', sql.Int, recordId)
+            .input('serviceId', sql.Int, serviceId)
+            .query(`
+                INSERT INTO record_service (recordid, serviceid, is_deleted)
+                VALUES (@recordId, @serviceId, 0)
+            `);
+
+        res.json({ success: true, message: 'Запись успешно создана.', recordId });
+    } catch (error) {
+        console.error('Ошибка при записи:', error.message);
+        res.status(500).json({ success: false, message: 'Произошла ошибка на сервере.' });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
