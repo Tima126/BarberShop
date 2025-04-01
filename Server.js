@@ -423,18 +423,7 @@ app.get('/Zapis/hairdresser', async (req, res) => {
             FROM hairdresser_schedule 
             LEFT JOIN hairdresser  
             ON hairdresser_schedule.hairdresserid = hairdresser.hairdresserid
-        `);
-
-
-<<<<<<< Updated upstream
-       
-=======
-<<<<<<< HEAD
-
-=======
-       
->>>>>>> d71d60a26f161dcc532f52320acf76af746c7aef
->>>>>>> Stashed changes
+        `)
 
 
         res.json(hairdressers.recordset);
@@ -447,23 +436,6 @@ app.get('/Zapis/hairdresser', async (req, res) => {
 
 
 
-app.get('/Zapis/Uslugi', async (req, res) => {
-    try {
-        const pool = await sql.connect(dbConfig);
-
-        
-        const result = await pool.request().query(`
-            SELECT serviceid, service_name 
-            FROM service 
-            WHERE is_deleted = 0
-        `);
-
-        res.json(result.recordset); 
-    } catch (error) {
-        console.error('Ошибка при получении услуг:', error.message);
-        res.status(500).json({ error: 'Ошибка сервера.' });
-    }
-});
 
 app.get('/Zapis/slots', async (req, res) => {
     const { hairdresserId, date } = req.query;
@@ -489,12 +461,11 @@ app.get('/Zapis/slots', async (req, res) => {
         const formattedSlots = result.recordset.map(slot => ({
             scheduleid: slot.scheduleid,
             hairdresserid: slot.hairdresserid,
-            workdate: slot.workdate.toISOString().split('T')[0], // Только дата (YYYY-MM-DD)
-            starttime: slot.starttime.toISOString().split('T')[1].substring(0, 5), // Только время (HH:mm)
-            endtime: slot.endtime.toISOString().split('T')[1].substring(0, 5), // Только время (HH:mm)
+            workdate: slot.workdate ? slot.workdate.toISOString().split('T')[0] : null, // Проверяем на NULL
+            starttime: slot.starttime ? slot.starttime.toISOString().split('T')[1].substring(0, 5) : null, // Проверяем на NULL
+            endtime: slot.endtime ? slot.endtime.toISOString().split('T')[1].substring(0, 5) : null, // Проверяем на NULL
             is_deleted: slot.is_deleted
         }));
-
         res.json(formattedSlots);
     } catch (error) {
         console.error('Ошибка при получении слотов:', error.message);

@@ -1,47 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     const hairdresserSelect = document.getElementById('input_hairdresser');
     const datePicker = document.getElementById('date-picker');
     const slotInput = document.getElementById('input_slot');
     const serviceSelect = document.getElementById('input_services');
-<<<<<<< Updated upstream
 
-
-
-    // загрузка услуг
-   async function LoadYslug() {
-        try {
-            const response = await fetch('/Zapis/Uslugi');
-            
-            if (!response.ok) {
-                throw new Error('Ошибка при загрузке данных услуг');
-            }
-
-            const uslug = await response.json();
-
-            serviceSelect.innerHTML = '';
-
-            if (uslug.length === 0) {
-                serviceSelect.innerHTML = '<option value="">Нет доступных услуг</option>';
-                return;
-            }
-
-            
-            uslug.forEach(service => {
-                const option = document.createElement('option');
-                option.value = service.serviceid;
-                option.textContent = service.service_name;
-                serviceSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Ошибка:', error.message);
-            serviceSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
-        }
-    }
-
-=======
-<<<<<<< HEAD
-    
+    // Функция для загрузки услуг
     async function loadService() {
         try {
             const response = await fetch('/Zapis/Service');
@@ -61,35 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const option = document.createElement('option');
                 option.value = servic.serviceid;
                 option.textContent = `${servic.service_name} - ${servic.service_cost}.руб`;
-=======
->>>>>>> Stashed changes
-
-
-
-    // загрузка услуг
-   async function LoadYslug() {
-        try {
-            const response = await fetch('/Zapis/Uslugi');
-            
-            if (!response.ok) {
-                throw new Error('Ошибка при загрузке данных услуг');
-            }
-
-            const uslug = await response.json();
-
-            serviceSelect.innerHTML = '';
-
-            if (uslug.length === 0) {
-                serviceSelect.innerHTML = '<option value="">Нет доступных услуг</option>';
-                return;
-            }
-
-            
-            uslug.forEach(service => {
-                const option = document.createElement('option');
-                option.value = service.serviceid;
-                option.textContent = service.service_name;
->>>>>>> d71d60a26f161dcc532f52320acf76af746c7aef
                 serviceSelect.appendChild(option);
             });
         } catch (error) {
@@ -98,18 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-<<<<<<< HEAD
-    loadService(); 
-=======
->>>>>>> d71d60a26f161dcc532f52320acf76af746c7aef
-
-
-    // Загрузка списка парикмахеров,  маршрут для сервера /Zapis/hairdresser
+    // Загрузка списка парикмахеров
     async function loadHairdressers() {
         try {
             const response = await fetch('/Zapis/hairdresser');
 
-            if (!response) throw new Error('Ошибка при загрузке парикмахера.');
+            if (!response.ok) throw new Error('Ошибка при загрузке парикмахера.');
 
             const hairdressers = await response.json();
 
@@ -125,26 +53,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.textContent = `${hairdresser.hairdresser_name} ${hairdresser.hairdresser_surname}`;
                 hairdresserSelect.appendChild(option);
             });
-
-
         } catch (error) {
             console.error('Ошибка:', error.message);
             hairdresserSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
         }
     }
 
-    // загрузка слотов для записи которые назначил админ 
+    // Загрузка слотов для записи
     async function loadSlots(hairdresserId, date) {
         try {
-
             if (!hairdresserId || !date) {
                 slotInput.innerHTML = '<option value="">Выберите дату и парикмахера</option>';
                 return;
             }
+
             const response = await fetch(`/Zapis/slots?hairdresserId=${hairdresserId}&date=${date}`);
-            console.log('Отправленные данные', { hairdresserId, date })
-
-
+            console.log('Отправленные данные', { hairdresserId, date });
 
             if (!response.ok) throw new Error('Ошибка при загрузке слотов.');
 
@@ -155,56 +79,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-
             slotInput.innerHTML = '';
-
             slots.forEach(slot => {
                 const option = document.createElement('option');
                 option.value = slot.scheduleid;
-                option.textContent = `${slot.starttime}`
+                option.textContent = `${slot.starttime}`;
                 slotInput.appendChild(option);
             });
-
-
-
         } catch (error) {
             console.error('Ошибка:', error.message);
             slotInput.innerHTML = '<option value="">Ошибка загрузки</option>';
         }
     }
 
-    
+    // Обработчики событий для обновления слотов
     hairdresserSelect.addEventListener('change', () => {
         const selectDate = datePicker.value;
-        const selectHasirdresserId = hairdresserSelect.value;
-
-
-        loadSlots(selectHasirdresserId, selectDate);
+        const selectHairdresserId = hairdresserSelect.value;
+        loadSlots(selectHairdresserId, selectDate);
     });
 
-
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
     datePicker.addEventListener('change', () => {
-=======
->>>>>>> Stashed changes
-
-
-
-
-    datePicker.addEventListener('change', () =>{
->>>>>>> d71d60a26f161dcc532f52320acf76af746c7aef
         const selectDate = datePicker.value;
-        const selectHasirdresserId = hairdresserSelect.value;
-        loadSlots(selectHasirdresserId, selectDate);
-
+        const selectHairdresserId = hairdresserSelect.value;
+        loadSlots(selectHairdresserId, selectDate);
     });
 
-    LoadYslug()
-    loadHairdressers()
-   
+    
+    loadService(); 
+    loadHairdressers();
 });
-
-
-
