@@ -151,6 +151,9 @@ app.post('/Login', async (req, res) => {
         return res.status(500).json({ message: 'Произошла ошибка при входе.' });
     }
 });
+
+
+
 // Маршрут для входа администратора
 app.post('/loginAdmin', async (req, res) => {
     const { login, password } = req.body;
@@ -238,7 +241,7 @@ JOIN
 WHERE 
     r.is_deleted = 0;
         `);
-            console.log()
+        console.log()
         res.json(records.recordset);
 
     } catch (error) {
@@ -562,7 +565,50 @@ app.post('/api/book-appointment', async (req, res) => {
 
 
 
+app.post('/HairdresLogin', async (req, res) => {
 
+    const { login, password } = req.body;
+
+    if (!login || !password) {
+        return res.status(400).json({ message: 'Логин и пароль обязательны.' });
+    }
+    try {
+        const result = await pool.request()
+            .input('Login', sql.NVarChar, phone)
+            .query('SELECT * FROM hairdresser WHERE hairdresser_Login = @Login');
+    
+        const users = result.recordset;
+    
+        if (users.length === 0) {
+            console.log(`Попытка входа: Пользователь с логин "${login}" не найден.`);
+            return res.status(400).json({ message: 'Пользователь с таким номером логином не найден.' });
+        }
+        const user = users[0];
+    
+        if (user.hairdresser_password !== password) {
+            console.log(`Попытка входа: Неверный пароль для пользователя "${user.client_name}".`);
+            return res.status(400).json({ message: 'Неверный пароль.' });
+        }
+    
+        console.log(`Пользователь вошел, Логин: ${login}`);
+    
+        return res.json({
+            success: true,
+            user: {
+                userid: user.hairdresserid,
+                username: user.hairdresser_name,
+                userPhone: user.hairdresser_phone
+            }
+        });
+
+    } catch (error) {
+        console.error('Ошибка при входе:', error.message);
+        return res.status(500).json({ message: 'Произошла ошибка при входе.' });
+    }
+
+
+
+});
 
 
 
